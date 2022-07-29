@@ -44,7 +44,7 @@ public class CurrencyCalculatorApp {
 
     private static void printOption() {
         System.out.println(" Dostępne opcje:");
-        System.out.println(" > Zamiana EUR na docelową wlutę - 0");
+        System.out.println(" > Zamiana EUR na docelową walutę - 0");
         System.out.println(" > Zamiana dowolnej waluty na inną dowolną walutę - 1");
         System.out.println(" > Wyjście z kalkulatora - 2");
     }

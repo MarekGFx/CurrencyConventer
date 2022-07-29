@@ -23,10 +23,8 @@ public class CurrencyCalculatorApp {
                 }
                 switch (OPTION) {
                     case 0:
-                        convertEUR();
-                        break;
                     case 1:
-                        convertAnyCurrency();
+                        convertCurrency();
                         break;
                     case 2:
                         System.out.println("Koniec programu");
@@ -41,61 +39,7 @@ public class CurrencyCalculatorApp {
                 System.out.println();
             }
         }
-       scanner.close();
-    }
-
-    private static void convertEUR() {
-        try {
-            System.out.println("Podaj kwotę w EUR:");
-            double amount = scanner.nextDouble();
-            if (amount < 0) {
-                throw new NegativeNumberException();
-            }
-            scanner.nextLine();
-            System.out.print("Podaj docelową walutę dostępną na liście: ");
-            printingExistingCurrencies(currencyMap);
-            String currencyName = scanner.nextLine().toUpperCase();
-            double convertAmount = euroCurrencyConventer(amount, currencyMap.get(currencyName));
-            System.out.println("Podana kwota po zamianie: " + convertAmount
-                    + " " + currencyMap.get(currencyName).getCurrencyName());
-            System.out.println();
-        } catch (InputMismatchException e) {
-            System.out.println("Należy wprowadzać tylko liczby!");
-            System.out.println();
-            scanner.nextLine();
-        } catch (NegativeNumberException e) {
-            System.out.println("Podana kwota nie może być liczbą ujemną");
-            System.out.println();
-        }
-    }
-
-    private static void convertAnyCurrency() {
-        try {
-            System.out.print("Podaj nazwę waluty do zamiany dostępną na liście: ");
-            printingExistingCurrencies(currencyMap);
-            String currencyNameToConvert = scanner.nextLine().toUpperCase();
-            System.out.println("Podaj kwotę waluty do zamiany:");
-            double amount = scanner.nextDouble();
-            if (amount < 0) {
-                throw new NegativeNumberException();
-            }
-            scanner.nextLine();
-            System.out.print("Podaj docelową walutę dostępną na liście: ");
-            printingExistingCurrencies(currencyMap);
-            String currencyName = scanner.nextLine().toUpperCase();
-            double convertAmount = anyCurrencyConventer(amount, currencyMap.get(currencyNameToConvert),
-                    currencyMap.get(currencyName));
-            System.out.println("Podana kwota po zamianie: " + convertAmount
-                    + " " + currencyMap.get(currencyName).getCurrencyName());
-            System.out.println();
-        } catch (InputMismatchException e) {
-            System.out.println("Należy wprowadzać tylko liczby!");
-            System.out.println();
-            scanner.nextLine();
-        } catch (NegativeNumberException e) {
-            System.out.println("Podana kwota nie może być liczbą ujemną");
-            System.out.println();
-        }
+        scanner.close();
     }
 
     private static void printOption() {
@@ -105,6 +49,53 @@ public class CurrencyCalculatorApp {
         System.out.println(" > Wyjście z kalkulatora - 2");
     }
 
+    private static void convertCurrency() {
+        try {
+            String currencyNameToConvert;
+            if (OPTION == 0) {
+                currencyNameToConvert = "EUR";
+                System.out.println("Podaj kwotę w EUR:");
+            } else {
+                System.out.print("Podaj nazwę waluty do zamiany dostępną na liście: ");
+                currencyNameToConvert = getCurrencyName();
+                System.out.println("Podaj kwotę waluty do zamiany:");
+            }
+            double amount = getAmount();
+            System.out.print("Podaj docelową walutę dostępną na liście: ");
+            String currencyName = getCurrencyName();
+            double convertAmount = currencyConventer(amount, currencyMap.get(currencyNameToConvert),
+                    currencyMap.get(currencyName));
+            printAmountCovered(currencyName, convertAmount);
+        } catch (InputMismatchException e) {
+            System.out.println("Należy wprowadzać tylko liczby!");
+            System.out.println();
+            scanner.nextLine();
+        } catch (NegativeNumberException e) {
+            System.out.println("Podana kwota nie może być liczbą ujemną");
+            System.out.println();
+        }
+    }
+
+    private static String getCurrencyName() {
+        printingExistingCurrencies(currencyMap);
+        return scanner.nextLine().toUpperCase();
+    }
+
+    private static double getAmount() {
+        double amount = scanner.nextDouble();
+        if (amount < 0) {
+            throw new NegativeNumberException();
+        }
+        scanner.nextLine();
+        return amount;
+    }
+
+    private static void printAmountCovered(String currencyName, double convertAmount) {
+        System.out.println("Podana kwota po zamianie: " + convertAmount
+                + " " + currencyMap.get(currencyName).getCurrencyName());
+        System.out.println();
+    }
+
     private static void printingExistingCurrencies(Map<String, Currency> currencyMap) {
         for (Currency c : currencyMap.values()) {
             System.out.print(c.getCurrencyName() + " ");
@@ -112,11 +103,7 @@ public class CurrencyCalculatorApp {
         System.out.println();
     }
 
-    static double euroCurrencyConventer(double amount, Currency currencyToGet) {
-        return (Math.round((amount * currencyToGet.getCurrencyRate()) * 100.0) / 100.0);
-    }
-
-    static double anyCurrencyConventer(double amount, Currency currencyToConvert, Currency currencyToGet) {
+    public static double currencyConventer(double amount, Currency currencyToConvert, Currency currencyToGet) {
         return (Math.round(((amount / currencyToConvert.getCurrencyRate())
                 * currencyToGet.getCurrencyRate()) * 100.0) / 100.0);
     }

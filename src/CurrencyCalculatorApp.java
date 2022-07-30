@@ -1,4 +1,5 @@
 import java.util.InputMismatchException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -93,6 +94,8 @@ public class CurrencyCalculatorApp {
     private static void printAmountCovered(String currencyName, double convertAmount) {
         System.out.println("Podana kwota po zamianie: " + convertAmount
                 + " " + currencyMap.get(currencyName).getCurrencyName());
+        System.out.println("Po zaokrągleniu: " + Math.round(convertAmount * 100.0) / 100.0 + " "
+                + currencyMap.get(currencyName).getCurrencyName());
         System.out.println();
     }
 
@@ -104,7 +107,7 @@ public class CurrencyCalculatorApp {
     }
 
     public static double currencyConventer(double amount, Currency currencyToConvert, Currency currencyToGet) {
-        return (Math.round(((amount / currencyToConvert.getCurrencyRate())
-                * currencyToGet.getCurrencyRate()) * 100.0) / 100.0);
+        return ((amount / currencyToConvert.getCurrencyRate())
+                * currencyToGet.getCurrencyRate());
     }
 }
